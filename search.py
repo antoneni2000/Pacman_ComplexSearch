@@ -89,24 +89,32 @@ def depthFirstSearch(problem: SearchProblem):
     "* YOUR CODE HERE *"
     
     visited = set()  # set noduri vizitate
-    stack = [(problem.getStartState(), [])]
-    while stack:
-        state, path = stack.pop()  #scoatere nod si cale 
+    stack = util.Stack()  #stiva pt cautare in adancime
+    stack.push((problem.getStartState(),[])) #adaugare nod start pe stiva
+
+    while not stack.isEmpty():
+        state, path = stack.pop() #socatere nod
+        # stare curenta= stare tinta?
         if problem.isGoalState(state):
-            return path  #nod tinta=> return cale
+             return path       #nod tinta, returneaza cale
+        #marcare nod ca vizitat
         if state not in visited:
             visited.add(state)
-            #adaugare succesori 
-            stack.extend((neighbor, path + [action]) for neighbor, action, _ in problem.getSuccessors(state))
-    return [] 
+            #adaugare succesori
+            for neighbor, action, _ in problem.getSuccessors(state):
+                stack.push((neighbor, path+[action]))
+
+    return None
 
 def breadthFirstSearch(problem: SearchProblem):
     """Search the shallowest nodes in the search tree first."""
     "* YOUR CODE HERE *"
     visited = set()
-    queue = [(problem.getStartState(), [])]
-    while queue:
-        state, path= queue.pop(0) #scoatere nod 
+    queue = util.Queue()  #coada pt cautare in latime
+    queue.push((problem.getStartState(), []))#adaugare nod start 
+
+    while not queue.isEmpty():
+        state, path= queue.pop() #scoatere nod 
         #stare curenta = goal state?
         if problem.isGoalState(state):
             return path 
@@ -114,7 +122,8 @@ def breadthFirstSearch(problem: SearchProblem):
         if state not in visited:
             visited.add(state)
             #adaugare succesori
-            queue.extend((neighbor, path + [action]) for neighbor, action, _ in problem.getSuccessors(state))
+            for neighbor, action, _ in problem.getSuccessors(state):
+                queue.push((neighbor, path+[action]))
 
     return []
 
@@ -170,7 +179,7 @@ def aStarSearch(problem: SearchProblem, heuristic=nullHeuristic):
         state,path,cost = priority_queue.pop() #scoatere
         #st curenta = goal state?
         if problem.isGoalState(state):
-            return path #return cale
+            return path 
 
         if state not in visited:  #marcare nod vizitat
             visited.add(state)
